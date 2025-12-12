@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Product = require('./models/Product');
 
 // --- PEGA AQUÍ TU CONNECTION STRING DE NUEVO ---
-const MONGO_URI = "mongodb+srv://javiergamarracarrasco:Alianzalima_1&15@cluster0.ebby0ro.mongodb.net/?appName=Cluster0"; 
+const MONGO_URI = "mongodb+srv://javiergamarracarrasco:Alianzalima1815@cluster0.ebby0ro.mongodb.net/?appName=Cluster0"; 
 
 const products = [
     {

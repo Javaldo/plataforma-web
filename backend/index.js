@@ -13,7 +13,7 @@ app.use(express.json());
 // --- 3. CONEXIÓN A MONGODB ---
 // Reemplaza esto con TU ruta de MongoDB Atlas que copiaste
 // OJO: Donde dice <password> pon tu contraseña real sin los símbolos <>
-const MONGO_URI = "mongodb+srv://javiergamarracarrasco:Alianzalima_1&15@cluster0.ebby0ro.mongodb.net/?appName=Cluster0"; 
+const MONGO_URI = "mongodb+srv://javiergamarracarrasco:Alianzalima1815@cluster0.ebby0ro.mongodb.net/?appName=Cluster0"; 
 
 mongoose.connect(MONGO_URI)
     .then(() => console.log("✅ Conectado a MongoDB Atlas"))
