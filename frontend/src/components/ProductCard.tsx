@@ -18,6 +18,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     alt={product.name}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    unoptimized={true}
                 />
                 <div className="absolute top-4 left-4 bg-slate-900/80 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
                     {product.category}

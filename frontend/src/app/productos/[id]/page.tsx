@@ -38,10 +38,14 @@ export default async function ProductDetailPage({ params }: Props) {
                     {/* IMAGEN */}
                     <div className="relative h-[400px] lg:h-[500px] w-full rounded-xl overflow-hidden bg-slate-100">
                         {/* Mantenemos Image de Next.js, si falla usamos img normal */}
-                        <img 
+                        {/* VOLVEMOS A USAR NEXT/IMAGE CON EL ARREGLO */}
+                        <Image 
                             src={product.image} 
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            priority // Carga rápido porque es la imagen principal
+                            unoptimized={true} // <--- ESTA ES LA CLAVE PARA QUE VERCEL NO FALLE
                         />
                         <div className="absolute top-4 left-4">
                             <span className="bg-yellow-500 text-slate-900 px-4 py-1 rounded-full font-bold text-sm shadow-md">

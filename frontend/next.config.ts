@@ -1,21 +1,26 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* Ignorar errores de TypeScript durante el despliegue */
+  /* Ignoramos errores de build para que despliegue sí o sí */
   typescript: {
     ignoreBuildErrors: true,
   },
-  /* Ignorar errores de ESLint durante el despliegue */
   eslint: {
     ignoreDuringBuilds: true,
   },
-  /* Configuración de imágenes que ya teníamos */
+  
+  /* CONFIGURACIÓN DE IMÁGENES */
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
+        // Los dos asteriscos ** permiten images.unsplash, plus.unsplash, etc.
+        hostname: '**.unsplash.com', 
       },
+      {
+        protocol: 'https',
+        hostname: '**.placeholder.com', // Por si usas otras fuentes de prueba
+      }
     ],
   },
 };
