@@ -46,9 +46,9 @@ export default function Navbar() {
       {/* MENU MOVIL */}
       {isOpen && (
         <div className="md:hidden bg-slate-900 absolute top-full left-0 w-full p-6 flex flex-col gap-4 text-white border-t border-slate-800">
-          <Link href="/productos" onClick={() => setIsOpen(false)}>Catálogo</Link>
+          <Link href="/#catalogo" onClick={() => setIsOpen(false)}>Catálogo</Link>
           <Link href="/servicios" onClick={() => setIsOpen(false)}>Servicios</Link>
-          <Link href="/contacto" onClick={() => setIsOpen(false)} className="text-yellow-500 font-bold">Solicitar Cotización</Link>
+          <Link href="/contactar" onClick={() => setIsOpen(false)} className="text-yellow-500 font-bold">Solicitar Cotización</Link>
         </div>
       )}
     </nav>
