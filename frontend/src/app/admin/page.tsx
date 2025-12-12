@@ -30,6 +30,7 @@ export default function AdminPage() {
     // FUNCIÓN PARA LOGIN
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
+
         // Compara con la variable de entorno
         if (passwordInput === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
             setIsAuthorized(true);
