@@ -113,11 +113,6 @@ export default function AdminPage() {
                         <Lock className="text-yellow-600" size={32} />
                     </div>
                     <h2 className="text-2xl font-bold text-slate-900 mb-2">Área Restringida</h2>
-                    {/* --- AGREGAR ESTO TEMPORALMENTE --- */}
-<p className="text-red-500 text-xs">
-    Debug: La clave que espera el sistema es: [{process.env.NEXT_PUBLIC_ADMIN_PASSWORD}]
-</p>
-{/* ---------------------------------- */}
                     <p className="text-slate-500 mb-6">Introduce la clave maestra para acceder al panel.</p>
                     
                     <form onSubmit={handleLogin} className="space-y-4">
