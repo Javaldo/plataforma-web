@@ -33,7 +33,7 @@ export default async function Home() {
       </div>
 
       {/* SECCIÓN DEL CATÁLOGO INTERACTIVO */}
-      <div className="container mx-auto px-6 py-16 -mt-20 relative z-20">
+      <div id="catalogo" className="container mx-auto px-6 py-16 -mt-20 relative z-20">
           {/* Aquí usamos el componente cliente que creamos */}
           <Catalog initialProducts={products} />
       </div>

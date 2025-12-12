@@ -29,10 +29,10 @@ export default function Navbar() {
 
         {/* MENU ESCRITORIO */}
         <div className="hidden md:flex items-center space-x-8 text-white">
-          <Link href="/productos" className="hover:text-yellow-500 transition">Catálogo</Link>
+          <Link href="/#catalogo" className="hover:text-yellow-500 transition">Catálogo</Link>
           <Link href="/servicios" className="hover:text-yellow-500 transition">Servicios</Link>
-          <Link href="/nosotros" className="hover:text-yellow-500 transition">Empresa</Link>
-          <Link href="/contacto" className="bg-yellow-500 text-slate-900 px-5 py-2 rounded-full font-bold hover:bg-yellow-400 transition flex items-center gap-2">
+          <Link href="/empresa" className="hover:text-yellow-500 transition">Empresa</Link>
+          <Link href="/contactar" className="bg-yellow-500 text-slate-900 px-5 py-2 rounded-full font-bold hover:bg-yellow-400 transition flex items-center gap-2">
             <Phone size={18} /> Contactar
           </Link>
         </div>
