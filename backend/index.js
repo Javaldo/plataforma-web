@@ -89,16 +89,66 @@ app.post('/api/send-email', async (req, res) => {
 
     try {
         const data = await resend.emails.send({
-            from: 'onboarding@resend.dev', // Correo genérico de envío (seguro)
-            to: process.env.EMAIL_USER,    // A DÓNDE llega (Tu correo real)
-            reply_to: email,               // Para que al responder, le respondas al cliente
-            subject: `🔔 Nuevo Lead: ${subject || 'Consulta General'}`,
+            from: 'onboarding@resend.dev',
+            to: process.env.EMAIL_USER, 
+            reply_to: email, // Esto permite que al dar "Responder", le escribas al cliente
+            subject: `🔔 Nuevo Lead: ${productName ? productName : 'Consulta General'}`,
             html: `
-                <h1>Nuevo mensaje de ${name}</h1>
-                <p><strong>Producto:</strong> ${productName || 'N/A'}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Teléfono:</strong> ${phone}</p>
-                <p><strong>Mensaje:</strong> ${message}</p>
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: 'Arial', sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; }
+                    .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                    .header { background-color: #0f172a; padding: 20px; text-align: center; border-bottom: 4px solid #eab308; }
+                    .header h1 { color: #ffffff; margin: 0; font-size: 24px; }
+                    .content { padding: 30px; color: #334155; }
+                    .label { font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: bold; margin-bottom: 4px; display: block; }
+                    .value { font-size: 16px; color: #0f172a; margin-bottom: 20px; font-weight: 500; }
+                    .message-box { background-color: #f8fafc; border-left: 4px solid #eab308; padding: 15px; margin-top: 10px; font-style: italic; }
+                    .footer { background-color: #f1f5f9; padding: 15px; text-align: center; font-size: 12px; color: #94a3b8; }
+                    .tag { display: inline-block; background-color: #eab308; color: #0f172a; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 14px; margin-bottom: 20px;}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>Plataforma Industrial</h1>
+                    </div>
+
+                    <div class="content">
+                        ${productName 
+                            ? `<div style="text-align:center;"><span class="tag">Interesado en: ${productName}</span></div>` 
+                            : ''
+                        }
+
+                        <div style="display: flex; justify-content: space-between;">
+                            <div style="width: 48%;">
+                                <span class="label">Nombre del Cliente</span>
+                                <div class="value">${name}</div>
+                            </div>
+                            <div style="width: 48%;">
+                                <span class="label">Teléfono</span>
+                                <div class="value">${phone || 'No especificado'}</div>
+                            </div>
+                        </div>
+
+                        <span class="label">Correo Electrónico</span>
+                        <div class="value"><a href="mailto:${email}" style="color: #2563eb; text-decoration: none;">${email}</a></div>
+
+                        <span class="label">Mensaje del Cliente</span>
+                        <div class="message-box">
+                            "${message}"
+                        </div>
+                    </div>
+
+                    <div class="footer">
+                        <p>Este correo fue enviado desde el formulario web.</p>
+                        <p>Plataforma Industrial &copy; ${new Date().getFullYear()}</p>
+                    </div>
+                </div>
+            </body>
+            </html>
             `
         });
 
