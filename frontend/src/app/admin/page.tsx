@@ -5,6 +5,12 @@ import Link from 'next/link';
 import Navbar from '@/src/components/Navbar';
 import { Product } from '@/src/types'; // Asegúrate de tener este tipo o usa any temporalmente
 
+interface ProductForm {
+    name: string;
+    category: string;
+    image: string;
+}
+
 export default function AdminPage() {
     // --- SEGURIDAD ---
     const [isAuthorized, setIsAuthorized] = useState(false);
@@ -16,11 +22,20 @@ export default function AdminPage() {
     const [isLoading, setIsLoading] = useState(false);
     
     // --- FORMULARIO ---
-    const [formData, setFormData] = useState({ name: '', category: '', image: '' });
+    //const [formData, setFormData] = useState({ name: '', category: '', image: '' });
+    const [formData, setFormData] = useState<ProductForm>({
+        name: '',
+        category: '',
+        image: '' // <--- Al inicializarlo vacío, TypeScript ya sabe que existe
+    });
     const [specs, setSpecs] = useState([{ label: '', value: '' }]);
 
     // URL de la API
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+
+    // Imagenes
+    
+    const [uploading, setUploading] = useState(false);
 
     // 1. VERIFICAR SESIÓN Y CARGAR PRODUCTOS
     useEffect(() => {
@@ -134,6 +149,47 @@ export default function AdminPage() {
         );
     }
 
+
+
+    // --- RENDERIZANDO SUBIDA DE IMAGENES ---
+    // 2. Función que se activa cuando seleccionas un archivo
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true); // Activamos el "Cargando..."
+        const formData = new FormData();
+        
+        // IMPORTANTE: 'image' debe coincidir con lo que pusimos en el backend (upload.single('image'))
+        formData.append('image', file); 
+
+        try {
+            // Asegúrate de que apunte a tu backend (local o nube)
+            const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+            
+            const res = await fetch(`${API_URL}/upload`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                // ¡AQUÍ ESTÁ LA MAGIA! ✨
+                // Guardamos la URL de Cloudinary en el estado de tu formulario
+                // (Asumo que tu estado se llama 'newProduct' o 'formData')
+                setFormData({ ...formData, image: data.url }); 
+            } else {
+                alert('Error al subir la imagen');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error de conexión');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+
     // --- RENDERIZADO PANEL ---
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
@@ -156,7 +212,36 @@ export default function AdminPage() {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <input name="name" value={formData.name} onChange={handleChange} placeholder="Nombre" className="w-full px-4 py-2 border rounded-lg" required />
                             <input name="category" value={formData.category} onChange={handleChange} placeholder="Categoría" className="w-full px-4 py-2 border rounded-lg" required />
-                            <input name="image" value={formData.image} onChange={handleChange} placeholder="URL Imagen" className="w-full px-4 py-2 border rounded-lg" required />
+                            
+                            <div className="border border-dashed border-slate-300 rounded-lg p-4 bg-slate-50">
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Imagen del Equipo</label>
+                                
+                                <div className="flex items-center gap-4">
+                                    <input 
+                                        type="file" 
+                                        accept="image/*"
+                                        onChange={handleImageUpload} // <--- Asegúrate de tener esta función arriba
+                                        className="block w-full text-sm text-slate-500
+                                            file:mr-4 file:py-2 file:px-4
+                                            file:rounded-full file:border-0
+                                            file:text-xs file:font-semibold
+                                            file:bg-slate-900 file:text-white
+                                            hover:file:bg-slate-700
+                                            cursor-pointer"
+                                    />
+                                    
+                                    {/* Cargando... */}
+                                    {uploading && <span className="text-xs font-bold text-blue-600 animate-pulse">Subiendo... ☁️</span>}
+                                </div>
+
+                                {/* Vista Previa (Si ya hay imagen guardada en formData) */}
+                                {formData.image && (
+                                    <div className="mt-3">
+                                        <p className="text-xs text-green-600 font-bold mb-1">✔ Imagen cargada:</p>
+                                        <img src={formData.image} alt="Preview" className="h-20 w-auto rounded border bg-white object-contain" />
+                                    </div>
+                                )}
+                            </div>
                             
                             <div className="bg-slate-50 p-4 rounded-lg space-y-2">
                                 <label className="text-sm font-bold text-slate-500">Specs</label>

@@ -12,6 +12,40 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 app.use(cors());
 app.use(express.json());
 
+//Implementación de Cloudinary para la subida de fotos
+// --- NUEVO: SUBIDA DE IMÁGENES ---
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const multer = require('multer');
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'catalogo', // Carpeta en Cloudinary
+        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+    },
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/api/upload', upload.single('image'), (req, res) => {
+    try {
+        // Cloudinary nos devuelve la URL directa aquí:
+        res.json({ url: req.file.path });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error subiendo imagen' });
+    }
+});
+//----------------------------------------------------
+
+
 // --- 3. CONEXIÓN A MONGODB ---
 // Reemplaza esto con TU ruta de MongoDB Atlas que copiaste
 // OJO: Donde dice <password> pon tu contraseña real sin los símbolos <>
@@ -92,7 +126,7 @@ app.post('/api/send-email', async (req, res) => {
             from: 'onboarding@resend.dev',
             to: process.env.EMAIL_USER, 
             reply_to: email, // Esto permite que al dar "Responder", le escribas al cliente
-            subject: `🔔 Nuevo Lead: ${productName ? productName : 'Consulta General'}`,
+            subject: `🔔 Nueva Cotización: ${productName ? productName : 'Consulta General'}`,
             html: `
             <!DOCTYPE html>
             <html>
