@@ -2,11 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose'); // <--- 1. Importar Mongoose
-const nodemailer = require('nodemailer');
 const Product = require('./models/Product'); // <--- 2. Importar el Modelo
+const { Resend } = require('resend');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 app.use(cors());
 app.use(express.json());
@@ -83,44 +84,28 @@ app.delete('/api/products/:id', async (req, res) => {
 
 // --- NUEVA RUTA: ENVIAR CORREO ---
 app.post('/api/send-email', async (req, res) => {
+    // Recibimos los datos del frontend
     const { name, email, phone, subject, message, productName } = req.body;
 
-    // Configuración del transporte (Tu cuenta de Gmail)
-    const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",  // Servidor explícito
-        port: 587,               // Puerto seguro SSL
-        secure: false,            // Usar SSL
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
-
-    // Diseño del correo que te llegará a ti
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER, // Te lo envías a ti mismo
-        subject: `🔔 Nuevo Lead: ${subject || 'Consulta General'}`,
-        html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee;">
-                <h2 style="color: #ca8a04;">Nuevo Mensaje de la Web</h2>
-                ${productName ? `<p><strong>Interesado en:</strong> ${productName}</p>` : ''}
-                <p><strong>Cliente:</strong> ${name}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Teléfono:</strong> ${phone || 'No especificado'}</p>
-                <hr/>
-                <p><strong>Mensaje:</strong></p>
-                <p style="background: #f9f9f9; padding: 10px;">${message}</p>
-            </div>
-        `
-    };
-
     try {
-        await transporter.sendMail(mailOptions);
-        res.status(200).json({ message: 'Correo enviado exitosamente' });
+        const data = await resend.emails.send({
+            from: 'onboarding@resend.dev', // Correo genérico de envío (seguro)
+            to: process.env.EMAIL_USER,    // A DÓNDE llega (Tu correo real)
+            reply_to: email,               // Para que al responder, le respondas al cliente
+            subject: `🔔 Nuevo Lead: ${subject || 'Consulta General'}`,
+            html: `
+                <h1>Nuevo mensaje de ${name}</h1>
+                <p><strong>Producto:</strong> ${productName || 'N/A'}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Teléfono:</strong> ${phone}</p>
+                <p><strong>Mensaje:</strong> ${message}</p>
+            `
+        });
+
+        res.status(200).json(data);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error enviando el correo' });
+        res.status(500).json({ error: error.message });
     }
 });
 
